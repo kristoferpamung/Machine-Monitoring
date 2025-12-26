@@ -1,6 +1,8 @@
 using MachineMonitoring.Api.DTOs;
+using MachineMonitoring.Api.Hubs;
 using MachineMonitoring.Api.Models;
 using MachineMonitoring.Api.Repositories;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MachineMonitoring.Api.Services;
 
@@ -9,12 +11,16 @@ public class MachineLogService : IMachineLogService
     private readonly IMachineLogRepository _logRepo;
     private readonly IMachineRepository _machineRepo;
 
+    private readonly IHubContext<MachineLogHub> _hubContext;
+
     public MachineLogService(
         IMachineLogRepository logRepo,
-        IMachineRepository machineRepo)
+        IMachineRepository machineRepo,
+        IHubContext<MachineLogHub> hubContext)
     {
         _logRepo = logRepo;
         _machineRepo = machineRepo;
+        _hubContext = hubContext;
     }
 
     public async Task CreateAsync(CreateMachineLogDto dto)
@@ -35,6 +41,22 @@ public class MachineLogService : IMachineLogService
 
         await _logRepo.AddAsync(log);
         await _logRepo.SaveChangesAsync();
+
+        // Broadcast after create log
+        await _hubContext.Clients.All.SendAsync(
+        "ReceiveMachineLog",
+        new
+        {
+            log.Id,
+            log.MachineId,
+            MachineName = log.Machine.Name,
+            log.OperatorId,
+            OperatorName = log.Operator?.Name,
+            log.ProducedPerMinute,
+            log.MachineStatus,
+            log.Temperature,
+            log.LogTime
+        });
     }
 
     public async Task<List<MachineLogDto>> GetByMachineAsync(int machineId)

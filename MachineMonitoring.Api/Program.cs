@@ -1,4 +1,5 @@
 using MachineMonitoring.Api.Data;
+using MachineMonitoring.Api.Hubs;
 using MachineMonitoring.Api.Repositories;
 using MachineMonitoring.Api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,12 @@ builder.Services.AddSwaggerGen(c =>
             Name = "Kristofer"
         }
     });
-} );
+});
 
+// Add SignalR
+builder.Services.AddSignalR();
+
+// Add DbContext
 builder.Services.AddDbContext<MachineMonitoringDbContext>(options =>
     options.UseSqlite("Data Source=MachineMonitoring.db"));
 
@@ -53,5 +58,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MachineLogHub>("/hubs/machine-log");
 
 app.Run();
