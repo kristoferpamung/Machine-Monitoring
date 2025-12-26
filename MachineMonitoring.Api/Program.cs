@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MachineMonitoringDbContext>(options =>
-    options.UseSqlite("Data Source=ProductCatalog.db"));
+    options.UseSqlite("Data Source=MachineMonitoring.db"));
 
 var app = builder.Build();
 
