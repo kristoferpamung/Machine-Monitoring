@@ -1,5 +1,6 @@
 using MachineMonitoring.Api.DTOs;
 using MachineMonitoring.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MachineMonitoring.Api.Controllers;
@@ -17,6 +18,7 @@ public class OperatorsController : ControllerBase
 
     // GET: api/machines
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
     {
         var machines = await _operatorService.GetAllAsync();
@@ -25,6 +27,7 @@ public class OperatorsController : ControllerBase
 
     // GET: api/machines/5
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetById(int id)
     {
         var machine = await _operatorService.GetByIdAsync(id);
@@ -36,6 +39,7 @@ public class OperatorsController : ControllerBase
 
     // POST: api/machines
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateOperatorDto dto)
     {
         await _operatorService.CreateAsync(dto);
@@ -44,6 +48,7 @@ public class OperatorsController : ControllerBase
 
     // PUT: api/machines/5
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateOperatorDto dto)
     {
         try
@@ -59,6 +64,7 @@ public class OperatorsController : ControllerBase
 
     // DELETE: api/machines/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         try
