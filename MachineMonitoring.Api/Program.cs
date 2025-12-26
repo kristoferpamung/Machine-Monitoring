@@ -1,4 +1,6 @@
 using MachineMonitoring.Api.Data;
+using MachineMonitoring.Api.Repositories;
+using MachineMonitoring.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MachineMonitoringDbContext>(options =>
     options.UseSqlite("Data Source=MachineMonitoring.db"));
+
+// DI Repository
+builder.Services.AddScoped<IMachineRepository, MachineRepository>();
+builder.Services.AddScoped<IOperatorRepository, OperatorRepository>();
+builder.Services.AddScoped<IMachineLogRepository, MachineLogRepository>();
+
+// DI Services
+builder.Services.AddScoped<IMachineService, MachineService>();
+builder.Services.AddScoped<IOperatorService, OperatorService>();
+builder.Services.AddScoped<IMachineLogService, MachineLogService>();
+
 
 var app = builder.Build();
 
